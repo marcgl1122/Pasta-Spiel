@@ -56,7 +56,11 @@
       frameCount++;
       if (frameCount % 100 === 0) {
         createPipe();
-        score++; // Increment score when a new pipe is created
+        pipes.forEach(pipe => {
+        if (pipe.x + pipe.width === 50) {
+          score++;
+        }
+      });
       }
 
       velocity += gravity;
@@ -89,7 +93,7 @@
     function draw() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      ctx.drawImage(pastaImage, 50, pastaY - 90, 180, 180);
+      ctx.drawImage(pastaImage, 50, pastaY - 63, 126, 126);
       
       pipes.forEach(pipe => {
         ctx.fillStyle = 'green';
