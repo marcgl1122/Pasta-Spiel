@@ -36,10 +36,6 @@
     const pastaImage = new Image();
     pastaImage.src = 'pasta.png'; // Replace 'pasta.png' with the path to your vector pasta image file
     
-    pastaImage.onload = function() {
-      pastaImage.hasTransparency = true;
-    }
-    
     function createPipe() {
       const gapHeight = 150;
       const pipeWidth = 50;
@@ -56,11 +52,6 @@
       frameCount++;
       if (frameCount % 100 === 0) {
         createPipe();
-        pipes.forEach(pipe => {
-        if (pipe.x + pipe.width === 50) {
-          score++;
-        }
-      });
       }
 
       velocity += gravity;
@@ -77,6 +68,11 @@
         ) {
           resetGame();
         }
+
+        // Increment score when pasta passes a pipe
+        if (pipe.x + pipe.width === 50) {
+          score++;
+        }
       });
       pipes = pipes.filter(pipe => pipe.x + pipe.width > 0);
     }
@@ -87,7 +83,6 @@
       pipes = [];
       frameCount = 0;
       score = 0;
-    }
     }
 
     function draw() {
