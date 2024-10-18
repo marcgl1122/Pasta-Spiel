@@ -110,6 +110,9 @@
 
     const backgroundImage = new Image();
     backgroundImage.src = 'background.png'; // Use the background image file
+    backgroundImage.onload = function() {
+      console.log("Background image loaded successfully.");
+    };
     backgroundImage.onerror = function() {
       console.error("Failed to load background image. Please check the path to 'background.png'.");
     };
@@ -118,10 +121,12 @@
 
     function startGame(pastaSrc) {
       pastaImage.src = pastaSrc;
-      document.getElementById('menu').style.display = 'none';
-      canvas.style.display = 'block';
-      lastUpdateTime = performance.now();
-      requestAnimationFrame(gameLoop);
+      pastaImage.onload = function() {
+        document.getElementById('menu').style.display = 'none';
+        canvas.style.display = 'block';
+        lastUpdateTime = performance.now();
+        requestAnimationFrame(gameLoop);
+      };
     }
     
     function createPipe() {
@@ -224,10 +229,3 @@
 
       requestAnimationFrame(gameLoop);
     }
-
-    canvas.addEventListener('click', () => {
-      velocity = lift;
-    });
-  </script>
-</body>
-</html>
