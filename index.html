@@ -40,6 +40,18 @@
     pastaImage.onerror = function() {
       console.error("Failed to load pasta image. Please check the path to 'pasta.png'.");
     };
+
+    const topPastaImage = new Image();
+    topPastaImage.src = 'top_pasta.png'; // Replace with the path to your top pasta image file
+    topPastaImage.onerror = function() {
+      console.error("Failed to load top pasta image. Please check the path to 'top_pasta.png'.");
+    };
+
+    const bottomPastaImage = new Image();
+    bottomPastaImage.src = 'bottom_pasta.png'; // Replace with the path to your bottom pasta image file
+    bottomPastaImage.onerror = function() {
+      console.error("Failed to load bottom pasta image. Please check the path to 'bottom_pasta.png'.");
+    };
     
     function createPipe() {
       const gapHeight = 150;
@@ -98,9 +110,10 @@
       ctx.drawImage(pastaImage, 50, pastaY - 63, 126, 126);
       
       pipes.forEach(pipe => {
-        ctx.fillStyle = 'green';
-        ctx.fillRect(pipe.x, 0, pipe.width, pipe.top);
-        ctx.fillRect(pipe.x, pipe.bottom, pipe.width, canvas.height - pipe.bottom);
+        // Draw top pasta pipe
+        ctx.drawImage(topPastaImage, pipe.x, 0, pipe.width, pipe.top);
+        // Draw bottom pasta pipe
+        ctx.drawImage(bottomPastaImage, pipe.x, pipe.bottom, pipe.width, canvas.height - pipe.bottom);
       });
 
       ctx.fillStyle = 'black';
