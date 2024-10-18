@@ -32,6 +32,9 @@
     let pipes = [];
     let frameCount = 0;
     let score = 0;
+
+    const pastaImage = new Image();
+    pastaImage.src = 'pasta.png'; // Replace 'pasta.png' with the path to your vector pasta image file
     
     function createPipe() {
       const gapHeight = 150;
@@ -78,8 +81,7 @@
     function draw() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      ctx.fillStyle = 'red';
-      ctx.fillRect(50, pastaY - 15, 30, 30);
+      ctx.drawImage(pastaImage, 50, pastaY - 15, 30, 30);
       
       pipes.forEach(pipe => {
         ctx.fillStyle = 'green';
