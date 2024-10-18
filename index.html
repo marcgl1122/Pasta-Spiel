@@ -36,6 +36,10 @@
     const pastaImage = new Image();
     pastaImage.src = 'pasta.png'; // Replace 'pasta.png' with the path to your vector pasta image file
     
+    pastaImage.onload = function() {
+      pastaImage.hasTransparency = true;
+    }
+    
     function createPipe() {
       const gapHeight = 150;
       const pipeWidth = 50;
