@@ -16,10 +16,30 @@
       display: block;
       margin: 0 auto;
     }
+    #menu {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background-color: #87CEEB;
+    }
+    .pasta-button {
+      margin: 10px;
+      padding: 15px 30px;
+      font-size: 20px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
-  <canvas id="gameCanvas" width="800" height="600"></canvas>
+  <div id="menu">
+    <h1>Choose Your Pasta</h1>
+    <button class="pasta-button" onclick="startGame('pasta1.png')">Spaghetti</button>
+    <button class="pasta-button" onclick="startGame('pasta2.png')">Fusilli</button>
+    <button class="pasta-button" onclick="startGame('pasta3.png')">Penne</button>
+  </div>
+  <canvas id="gameCanvas" width="800" height="600" style="display: none;"></canvas>
   <script>
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
@@ -36,10 +56,16 @@
     const targetFrameRate = 1000 / 60; // Set the target frame rate to 60 FPS
 
     const pastaImage = new Image();
-    pastaImage.src = 'pasta.png'; // Replace 'pasta.png' with the path to your vector pasta image file
     pastaImage.onerror = function() {
-      console.error("Failed to load pasta image. Please check the path to 'pasta.png'.");
+      console.error("Failed to load pasta image. Please check the path to the pasta image.");
     };
+
+    function startGame(pastaSrc) {
+      pastaImage.src = pastaSrc;
+      document.getElementById('menu').style.display = 'none';
+      canvas.style.display = 'block';
+      gameLoop(performance.now());
+    }
     
     function createPipe() {
       const gapHeight = 150;
@@ -124,10 +150,6 @@
     canvas.addEventListener('click', () => {
       velocity = lift;
     });
-
-    window.onload = function() {
-      gameLoop(performance.now());
-    };
   </script>
 </body>
 </html>
