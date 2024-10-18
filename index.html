@@ -125,7 +125,12 @@
         document.getElementById('menu').style.display = 'none';
         canvas.style.display = 'block';
         lastUpdateTime = performance.now();
-        requestAnimationFrame(gameLoop);
+        if (backgroundImage.complete) {
+          requestAnimationFrame(gameLoop);
+        } else {
+          backgroundImage.onload = () => requestAnimationFrame(gameLoop);
+        }
+      };
       };
     }
     
