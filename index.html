@@ -29,7 +29,7 @@
     const gravity = 0.5;
     const lift = -10;
 
-    const pipes = [];
+    let pipes = [];
     let frameCount = 0;
     let score = 0;
     
@@ -70,7 +70,7 @@
     function resetGame() {
       pastaY = canvas.height / 2;
       velocity = 0;
-      pipes.length = 0;
+      pipes = [];
       frameCount = 0;
       score = 0;
     }
@@ -102,7 +102,9 @@
       velocity = lift;
     });
 
-    gameLoop();
+    window.onload = function() {
+      gameLoop();
+    };
   </script>
 </body>
 </html>
