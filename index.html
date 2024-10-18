@@ -12,7 +12,6 @@
       background-color: #87CEEB;
     }
     canvas {
-      background: #ffebcd;
       display: block;
       margin: 0 auto;
     }
@@ -109,6 +108,14 @@
       console.error("Failed to load pasta image. Please check the path to the pasta image.");
     };
 
+    const backgroundImage = new Image();
+    backgroundImage.src = 'background.png'; // Use the background image file
+    backgroundImage.onerror = function() {
+      console.error("Failed to load background image. Please check the path to 'background.png'.");
+    };
+
+    let backgroundX = 0;
+
     function startGame(pastaSrc) {
       pastaImage.src = pastaSrc;
       document.getElementById('menu').style.display = 'none';
@@ -157,6 +164,11 @@
         }
       });
       pipes = pipes.filter(pipe => pipe.x + pipe.width > 0);
+
+      backgroundX -= 3.9 * (deltaTime / targetFrameRate);
+      if (backgroundX <= -canvas.width) {
+        backgroundX = 0;
+      }
     }
 
     function gameOver() {
@@ -178,12 +190,14 @@
       }, 500); // Small delay before showing the menu again
       canvas.style.display = 'none';
       console.log('Game Reset');
-      canvas.style.display = 'none';
-      console.log('Game Reset');
     }
 
     function draw() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Draw scrolling background
+      ctx.drawImage(backgroundImage, backgroundX, 0, canvas.width, canvas.height);
+      ctx.drawImage(backgroundImage, backgroundX + canvas.width, 0, canvas.width, canvas.height);
 
       ctx.drawImage(pastaImage, 50, pastaY - 63, 126, 126);
       
