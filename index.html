@@ -32,6 +32,7 @@
     let pipes = [];
     let frameCount = 0;
     let score = 0;
+      console.log('Game Reset');
 
     const pastaImage = new Image();
     pastaImage.src = 'pasta.png'; // Replace 'pasta.png' with the path to your vector pasta image file
@@ -67,8 +68,7 @@
         pipe.x -= 3;
         if (
           (pastaY < pipe.top || pastaY > pipe.bottom) &&
-          pipe.x < 100 &&
-          pipe.x + pipe.width > 50
+          pipe.x < 100 && pipe.x + pipe.width > 50
         ) {
           resetGame();
         }
@@ -104,6 +104,7 @@
       ctx.fillStyle = 'black';
       ctx.font = '20px Arial';
       ctx.fillText('Score: ' + score, 10, 30);
+      console.log('Current Score: ' + score);
     }
 
     function gameLoop() {
