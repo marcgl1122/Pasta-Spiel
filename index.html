@@ -173,7 +173,11 @@
       pipes = [];
       frameCount = 0;
       score = 0;
-      document.getElementById('menu').style.display = 'flex';
+      setTimeout(() => {
+        document.getElementById('menu').style.display = 'flex';
+      }, 500); // Small delay before showing the menu again
+      canvas.style.display = 'none';
+      console.log('Game Reset');
       canvas.style.display = 'none';
       console.log('Game Reset');
     }
