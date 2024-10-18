@@ -35,7 +35,7 @@
 <body>
   <div id="menu">
     <h1>Choose Your Pasta</h1>
-    <button class="pasta-button" onclick="startGame('pasta1.png')">Spaghetti</button>
+    <button class="pasta-button" onclick="startGame('pasta1.png')">Ravioli</button>
     <button class="pasta-button" onclick="startGame('pasta2.png')">Fusilli</button>
     <button class="pasta-button" onclick="startGame('pasta3.png')">Penne</button>
   </div>
@@ -64,7 +64,8 @@
       pastaImage.src = pastaSrc;
       document.getElementById('menu').style.display = 'none';
       canvas.style.display = 'block';
-      gameLoop(performance.now());
+      lastUpdateTime = performance.now();
+      requestAnimationFrame(gameLoop);
     }
     
     function createPipe() {
