@@ -32,7 +32,8 @@
     let pipes = [];
     let frameCount = 0;
     let score = 0;
-      console.log('Game Reset');
+    let lastUpdateTime = performance.now();
+    const fixedDeltaTime = 1000 / 60; // Set the target frame rate to 60 FPS
 
     const pastaImage = new Image();
     pastaImage.src = 'pasta.png'; // Replace 'pasta.png' with the path to your vector pasta image file
@@ -88,6 +89,7 @@
       pipes = [];
       frameCount = 0;
       score = 0;
+      console.log('Game Reset');
     }
 
     function draw() {
@@ -107,9 +109,15 @@
       console.log('Current Score: ' + score);
     }
 
-    function gameLoop() {
-      update();
-      draw();
+    function gameLoop(currentTime) {
+      const deltaTime = currentTime - lastUpdateTime;
+
+      if (deltaTime >= fixedDeltaTime) {
+        update();
+        draw();
+        lastUpdateTime = currentTime;
+      }
+
       requestAnimationFrame(gameLoop);
     }
 
@@ -118,7 +126,7 @@
     });
 
     window.onload = function() {
-      gameLoop();
+      gameLoop(performance.now());
     };
   </script>
 </body>
