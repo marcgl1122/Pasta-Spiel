@@ -30,7 +30,55 @@
       font-size: 20px;
       cursor: pointer;
     }
+    #highscores {
+      margin-top: 20px;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+    }
   </style>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
+  <script>
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_AUTH_DOMAIN",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_STORAGE_BUCKET",
+      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+      appId: "YOUR_APP_ID",
+      databaseURL: "YOUR_DATABASE_URL"
+    };
+
+    // Initialize Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+
+    function writeHighscore(name, score) {
+      const highscoreRef = database.ref('highscores').push();
+      highscoreRef.set({
+        name: name,
+        score: score
+      });
+    }
+
+    function loadHighscores() {
+      const highscoreRef = database.ref('highscores').orderByChild('score').limitToLast(10);
+      highscoreRef.on('value', (snapshot) => {
+        const highscores = [];
+        snapshot.forEach((childSnapshot) => {
+          const data = childSnapshot.val();
+          highscores.unshift(`${data.name}: ${data.score}`);
+        });
+        document.getElementById('highscores').innerHTML = '<h2>Highscores</h2><ul>' + highscores.map(score => `<li>${score}</li>`).join('') + '</ul>';
+      });
+    }
+
+    window.onload = function() {
+      loadHighscores();
+    };
+  </script>
 </head>
 <body>
   <div id="menu">
@@ -38,6 +86,7 @@
     <button class="pasta-button" onclick="startGame('pasta1.png')">Ravioli</button>
     <button class="pasta-button" onclick="startGame('pasta2.png')">Fusilli</button>
     <button class="pasta-button" onclick="startGame('pasta3.png')">Penne</button>
+    <div id="highscores"></div>
   </div>
   <canvas id="gameCanvas" width="800" height="600" style="display: none;"></canvas>
   <script>
@@ -98,7 +147,7 @@
           (pastaY < pipe.top || pastaY > pipe.bottom) &&
           pipe.x < 100 && pipe.x + pipe.width > 50
         ) {
-          resetGame();
+          gameOver();
         }
 
         // Increment score when pasta passes a pipe
@@ -110,12 +159,22 @@
       pipes = pipes.filter(pipe => pipe.x + pipe.width > 0);
     }
 
+    function gameOver() {
+      let playerName = prompt('Game over! Enter your name:');
+      if (playerName) {
+        writeHighscore(playerName, score);
+      }
+      resetGame();
+    }
+
     function resetGame() {
       pastaY = canvas.height / 2;
       velocity = 0;
       pipes = [];
       frameCount = 0;
       score = 0;
+      document.getElementById('menu').style.display = 'flex';
+      canvas.style.display = 'none';
       console.log('Game Reset');
     }
 
