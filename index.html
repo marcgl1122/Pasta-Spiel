@@ -43,8 +43,8 @@
     
     function createPipe() {
       const gapHeight = 150;
-      const pipeWidth = 50;
-      const topHeight = Math.random() * (canvas.height - gapHeight);
+      const pipeWidth = 80;
+      const topHeight = Math.random() * (canvas.height - gapHeight - 50) + 25;
       pipes.push({
         x: canvas.width,
         width: pipeWidth,
