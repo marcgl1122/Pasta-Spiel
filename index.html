@@ -35,6 +35,9 @@
 
     const pastaImage = new Image();
     pastaImage.src = 'pasta.png'; // Replace 'pasta.png' with the path to your vector pasta image file
+    pastaImage.onerror = function() {
+      console.error("Failed to load pasta image. Please check the path to 'pasta.png'.");
+    };
     
     function createPipe() {
       const gapHeight = 150;
@@ -44,7 +47,8 @@
         x: canvas.width,
         width: pipeWidth,
         top: topHeight,
-        bottom: topHeight + gapHeight
+        bottom: topHeight + gapHeight,
+        passed: false
       });
     }
 
@@ -70,8 +74,9 @@
         }
 
         // Increment score when pasta passes a pipe
-        if (pipe.x + pipe.width === 50) {
+        if (!pipe.passed && pipe.x + pipe.width < 50) {
           score++;
+          pipe.passed = true;
         }
       });
       pipes = pipes.filter(pipe => pipe.x + pipe.width > 0);
