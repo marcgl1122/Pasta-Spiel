@@ -33,7 +33,7 @@
     let frameCount = 0;
     let score = 0;
     let lastUpdateTime = performance.now();
-    const fixedDeltaTime = 1000 / 60; // Set the target frame rate to 60 FPS
+    const targetFrameRate = 1000 / 60; // Set the target frame rate to 60 FPS
 
     const pastaImage = new Image();
     pastaImage.src = 'pasta.png'; // Replace 'pasta.png' with the path to your vector pasta image file
@@ -54,19 +54,19 @@
       });
     }
 
-    function update() {
+    function update(deltaTime) {
       frameCount++;
       if (frameCount % 100 === 0) {
         createPipe();
       }
 
-      velocity += gravity;
-      pastaY += velocity;
+      velocity += gravity * (deltaTime / targetFrameRate);
+      pastaY += velocity * (deltaTime / targetFrameRate);
       if (pastaY < 0) pastaY = 0;
       if (pastaY > canvas.height) pastaY = canvas.height;
 
       pipes.forEach(pipe => {
-        pipe.x -= 3;
+        pipe.x -= 3 * (deltaTime / targetFrameRate);
         if (
           (pastaY < pipe.top || pastaY > pipe.bottom) &&
           pipe.x < 100 && pipe.x + pipe.width > 50
@@ -112,8 +112,8 @@
     function gameLoop(currentTime) {
       const deltaTime = currentTime - lastUpdateTime;
 
-      if (deltaTime >= fixedDeltaTime) {
-        update();
+      if (deltaTime >= targetFrameRate) {
+        update(deltaTime);
         draw();
         lastUpdateTime = currentTime;
       }
