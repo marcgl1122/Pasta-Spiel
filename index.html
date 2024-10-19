@@ -29,12 +29,7 @@
       font-size: 20px;
       cursor: pointer;
     }
-    #highscores {
-      margin-top: 20px;
-      background-color: #fff;
-      padding: 20px;
-      border-radius: 10px;
-    }
+    
   </style>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
@@ -122,11 +117,11 @@
     function startGame(pastaSrc) {
       pastaImage.src = pastaSrc;
       document.getElementById('menu').style.display = 'none';
-        canvas.style.display = 'block';
-        lastUpdateTime = performance.now();
-        requestAnimationFrame(gameLoop);
-        } else {
-          backgroundImage.onload = () => requestAnimationFrame(gameLoop);
+      canvas.style.display = 'block';
+      lastUpdateTime = performance.now();
+      requestAnimationFrame(gameLoop);
+    }
+        } 
         }
       };
       };
