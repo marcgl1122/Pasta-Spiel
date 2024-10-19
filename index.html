@@ -85,7 +85,7 @@
     <button class="pasta-button" onclick="startGame('pasta1.png')">Ravioli</button>
     <button class="pasta-button" onclick="startGame('pasta2.png')">Fusilli</button>
     <button class="pasta-button" onclick="startGame('pasta3.png')">Penne</button>
-    <div id="highscores"></div>
+    
   </div>
   <canvas id="gameCanvas" width="800" height="600" style="display: none;"></canvas>
   <script>
@@ -121,12 +121,10 @@
 
     function startGame(pastaSrc) {
       pastaImage.src = pastaSrc;
-      pastaImage.onload = function() {
-        document.getElementById('menu').style.display = 'none';
+      document.getElementById('menu').style.display = 'none';
         canvas.style.display = 'block';
         lastUpdateTime = performance.now();
-        if (backgroundImage.complete) {
-          requestAnimationFrame(gameLoop);
+        requestAnimationFrame(gameLoop);
         } else {
           backgroundImage.onload = () => requestAnimationFrame(gameLoop);
         }
