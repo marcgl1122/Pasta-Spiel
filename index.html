@@ -116,14 +116,13 @@
 
     function startGame(pastaSrc) {
       pastaImage.src = pastaSrc;
-      document.getElementById('menu').style.display = 'none';
-      canvas.style.display = 'block';
-      lastUpdateTime = performance.now();
-      requestAnimationFrame(gameLoop);
-    }
-        } 
-        }
+      pastaImage.onload = function() {
+        document.getElementById('menu').style.display = 'none';
+        canvas.style.display = 'block';
+        lastUpdateTime = performance.now();
+        requestAnimationFrame(gameLoop);
       };
+    };
       };
     }
     
