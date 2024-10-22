@@ -58,11 +58,12 @@
                 gameStarted = true;
                 requestAnimationFrame(updateGame);
                 window.addEventListener("keydown", handleKeyDown);
-                setInterval(() => {
-                if (pipes.length === 0 || pipes[pipes.length - 1].x < canvas.width - 200) {
-                    pipes.push({ x: canvas.width, y: Math.floor(Math.random() * (canvas.height / 2)) + 50 });
-                }
-            }, 1500);
+                let pipeInterval;
+                pipeInterval = setInterval(() => {
+                    if (pipes.length === 0 || pipes[pipes.length - 1].x < canvas.width - 200) {
+                        pipes.push({ x: canvas.width, y: Math.floor(Math.random() * (canvas.height / 2)) + 50 });
+                    }
+                }, 1500);
             };
         }
 
@@ -76,7 +77,7 @@
             if (!gameStarted) return;
 
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(pastaImage, pasta.x, pasta.y, pastaImage.width / 5, pastaImage.height / 5);
+            ctx.drawImage(pastaImage, pasta.x, pasta.y, pastaImage.width / 8, pastaImage.height / 8);
 
             pasta.velocity += pasta.gravity;
             pasta.y += pasta.velocity;
@@ -101,6 +102,7 @@
         }
 
         function resetGame() {
+            clearInterval(pipeInterval);
             gameStarted = false;
             pipes = [];
             pasta = { x: 50, y: 150, gravity: 0.25, lift: -6, velocity: 0 };
