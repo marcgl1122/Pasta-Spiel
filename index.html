@@ -3,87 +3,150 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pasta Cooking Game</title>
+    <title>Flappy Pasta Game</title>
     <style>
         body {
+            margin: 0;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #70c5ce;
+        }
+        #gameCanvas {
+            background: url('background.png') repeat-x;
+        }
+        #startMenu, #gameOverMenu {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             font-family: Arial, sans-serif;
-            background-color: #f0e6d2;
-            text-align: center;
-            padding: 20px;
         }
-        #game-container {
-            max-width: 600px;
-            margin: 0 auto;
-            background: #ffffff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-        }
-        .ingredient {
-            cursor: pointer;
-            padding: 10px;
+        #startMenu button, #gameOverMenu button {
             margin: 10px;
-            display: inline-block;
-            background-color: #ffcc66;
-            border-radius: 8px;
-        }
-        #pasta-status {
-            font-size: 1.2em;
-            margin: 20px 0;
-        }
-        #cook-button {
             padding: 10px;
-            background: #ff7043;
-            color: #ffffff;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1.2em;
+            font-size: 16px;
         }
-        #cook-button:hover {
-            background: #e64a19;
+        #gameOverMenu {
+            display: none;
         }
     </style>
 </head>
 <body>
-    <div id="game-container">
-        <h1>Welcome to the Pasta Cooking Game!</h1>
-        <p>Choose your ingredients and cook the perfect pasta dish!</p>
-        <div id="ingredient-list">
-            <div class="ingredient" onclick="selectIngredient('Tomato Sauce')">Tomato Sauce</div>
-            <div class="ingredient" onclick="selectIngredient('Basil')">Basil</div>
-            <div class="ingredient" onclick="selectIngredient('Garlic')">Garlic</div>
-            <div class="ingredient" onclick="selectIngredient('Parmesan')">Parmesan</div>
-            <div class="ingredient" onclick="selectIngredient('Olive Oil')">Olive Oil</div>
-            <div class="ingredient" onclick="selectIngredient('Mushrooms')">Mushrooms</div>
-        </div>
-        <div id="pasta-status">You haven't started cooking yet!</div>
-        <button id="cook-button" onclick="cookPasta()">Cook Pasta!</button>
+    <div id="startMenu">
+        <h1>Choose Your Pasta!</h1>
+        <button onclick="startGame('pasta1.png')">Ravioli</button>
+        <button onclick="startGame('pasta2.png')">Fusilli</button>
+        <button onclick="startGame('pasta3.png')">Penne</button>
     </div>
+    <div id="gameOverMenu">
+        <h1>Game Over!</h1>
+        <p id="scoreDisplay"></p>
+        <button onclick="goToMainMenu()">Return to Main Menu</button>
+    </div>
+    <canvas id="gameCanvas" width="480" height="640"></canvas>
 
     <script>
-        let selectedIngredients = [];
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+        let pastaImage;
+        let pasta = { x: 50, y: 150, gravity: 0.25, lift: -8, velocity: 0 };
+        let pipes = [];
+        let gameStarted = false;
+        let score = 0;
+        let pipeInterval;
 
-        function selectIngredient(ingredient) {
-            if (!selectedIngredients.includes(ingredient)) {
-                selectedIngredients.push(ingredient);
-                updatePastaStatus();
-            }
+        function startGame(pastaSrc) {
+            if (gameStarted) return;
+            document.addEventListener("mousedown", handleMouseClick, false);
+            pastaImage = new Image();
+            pastaImage.src = pastaSrc;
+            pastaImage.onload = () => {
+                document.getElementById("startMenu").style.display = "none";
+                document.getElementById("gameOverMenu").style.display = "none";
+                gameStarted = true;
+                score = 0;
+                pipes = [];
+                pasta = { x: 50, y: 150, gravity: 0.2, lift: -5, velocity: 0 };
+                requestAnimationFrame(updateGame);
+                window.addEventListener("keydown", handleKeyDown, false);
+                pipeInterval = setInterval(() => {
+                    if (pipes.length === 0 || pipes[pipes.length - 1].x < canvas.width - 200) {
+                        pipes.push({ x: canvas.width, y: Math.floor(Math.random() * (canvas.height / 2)) + 50, passed: false });
+                        
+                    }
+                }, 1500);
+            };
         }
 
-        function updatePastaStatus() {
-            let status = "Selected Ingredients: " + selectedIngredients.join(', ');
-            document.getElementById('pasta-status').innerText = status;
+        function handleKeyDown(event) {
+            if (event.code === "Space") {
+                pasta.velocity = pasta.lift * deltaTime * 60;
+            }
+        }
+        
+        function handleMouseClick() {
+            pasta.velocity = pasta.lift;
         }
 
-        function cookPasta() {
-            if (selectedIngredients.length === 0) {
-                alert('Please select at least one ingredient before cooking!');
-                return;
-            }
-            let pastaDish = "You cooked pasta with " + selectedIngredients.join(', ') + "! Delicious!";
-            document.getElementById('pasta-status').innerText = pastaDish;
-            selectedIngredients = []; // Reset the ingredients for a new game round
+        let lastTime = performance.now();
+        function updateGame() {
+            let currentTime = performance.now();
+            let deltaTime = (currentTime - lastTime) / 1000;
+            lastTime = currentTime;
+            if (!gameStarted) return;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(pastaImage, pasta.x, pasta.y, 120, 120);
+
+            pasta.velocity += pasta.gravity * deltaTime * 60;
+            pasta.y += pasta.velocity * deltaTime * 60;
+
+            // Draw pipes
+            pipes.forEach(pipe => {
+                if (pipe.x + 40 < pasta.x && !pipe.passed) {
+                    score++;
+                    pipe.passed = true;
+                }
+                pipe.x -= 1.5 * deltaTime * 60;
+                ctx.fillStyle = "#5b8c3a";
+                ctx.fillRect(pipe.x, 0, 40, pipe.y);
+                ctx.fillRect(pipe.x, pipe.y + 150, 40, canvas.height - pipe.y - 150);
+
+                // Check for collisions
+                if (pasta.x < pipe.x + 40 && pasta.x + 30 > pipe.x && (pasta.y < pipe.y || pasta.y + 45 > pipe.y + 150)) {
+                    endGame();
+                }
+                if (pasta.y + 45 >= canvas.height) {
+                    endGame();
+                }
+            });
+
+            requestAnimationFrame(updateGame);
+        }
+
+        function endGame() {
+            clearInterval(pipeInterval);
+            document.removeEventListener("mousedown", handleMouseClick);
+            window.removeEventListener("keydown", handleKeyDown);
+            gameStarted = false;
+            pasta.velocity = 0;
+            clearInterval(pipeInterval);
+            document.removeEventListener("mousedown", handleMouseClick);
+            window.removeEventListener("keydown", handleKeyDown);
+            window.removeEventListener("keydown", handleKeyDown);
+            gameStarted = false;
+            document.getElementById("scoreDisplay").innerText = `Score: ${score}`;
+            document.getElementById("gameOverMenu").style.display = "flex";
+        }
+
+        function goToMainMenu() {
+            document.getElementById("gameOverMenu").style.display = "none";
+            document.getElementById("startMenu").style.display = "flex";
         }
     </script>
 </body>
