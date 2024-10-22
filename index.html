@@ -114,10 +114,10 @@
                 ctx.fillRect(pipe.x, pipe.y + 150, 40, canvas.height - pipe.y - 150);
 
                 // Check for collisions
-                if (pasta.x < pipe.x + 40 && pasta.x + 30 > pipe.x && (pasta.y < pipe.y || pasta.y + 30 > pipe.y + 150)) {
+                if (pasta.x < pipe.x + 40 && pasta.x + 60 > pipe.x && (pasta.y < pipe.y + 30 || pasta.y + 60 > pipe.y + 150)) {
                     endGame();
                 }
-                if (pasta.y + 30 >= canvas.height) {
+                if (pasta.y + 60 >= canvas.height) {
                     endGame();
                 }
             });
