@@ -74,7 +74,7 @@
             if (!gameStarted) return;
 
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(pastaImage, pasta.x, pasta.y);
+            ctx.drawImage(pastaImage, pasta.x, pasta.y, pastaImage.width / 3, pastaImage.height / 3);
 
             pasta.velocity += pasta.gravity;
             pasta.y += pasta.velocity;
@@ -84,7 +84,7 @@
                 pipe.x -= 2;
                 ctx.fillStyle = "#5b8c3a";
                 ctx.fillRect(pipe.x, 0, 40, pipe.y);
-                ctx.fillRect(pipe.x, pipe.y + 100, 40, canvas.height - pipe.y);
+                ctx.fillRect(pipe.x, pipe.y + 150, 40, canvas.height - pipe.y - 150);
 
                 // Check for collisions
                 if (pasta.x < pipe.x + 40 && pasta.x + 30 > pipe.x && (pasta.y < pipe.y || pasta.y + 30 > pipe.y + 100)) {
