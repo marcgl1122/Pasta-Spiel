@@ -16,7 +16,7 @@
         #gameCanvas {
             background: url('background.png') repeat-x;
         }
-        #startMenu {
+        #startMenu, #gameOverMenu {
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -26,10 +26,13 @@
             transform: translate(-50%, -50%);
             font-family: Arial, sans-serif;
         }
-        #startMenu button {
+        #startMenu button, #gameOverMenu button {
             margin: 10px;
             padding: 10px;
             font-size: 16px;
+        }
+        #gameOverMenu {
+            display: none;
         }
     </style>
 </head>
@@ -40,6 +43,11 @@
         <button onclick="startGame('pasta2.png')">Fusilli</button>
         <button onclick="startGame('pasta3.png')">Penne</button>
     </div>
+    <div id="gameOverMenu">
+        <h1>Game Over!</h1>
+        <p id="scoreDisplay"></p>
+        <button onclick="goToMainMenu()">Return to Main Menu</button>
+    </div>
     <canvas id="gameCanvas" width="480" height="640"></canvas>
 
     <script>
@@ -49,6 +57,8 @@
         let pasta = { x: 50, y: 150, gravity: 0.25, lift: -6, velocity: 0 };
         let pipes = [];
         let gameStarted = false;
+        let score = 0;
+        let pipeInterval;
 
         function startGame(pastaSrc) {
             document.addEventListener("mousedown", handleMouseClick);
@@ -56,15 +66,19 @@
             pastaImage.src = pastaSrc;
             pastaImage.onload = () => {
                 document.getElementById("startMenu").style.display = "none";
+                document.getElementById("gameOverMenu").style.display = "none";
                 gameStarted = true;
+                score = 0;
+                pipes = [];
+                pasta = { x: 50, y: 150, gravity: 0.25, lift: -6, velocity: 0 };
                 requestAnimationFrame(updateGame);
                 window.addEventListener("keydown", handleKeyDown);
-                let pipeInterval;
                 pipeInterval = setInterval(() => {
-            if (pipes.length === 0 || pipes[pipes.length - 1].x < canvas.width - 200) {
-                pipes.push({ x: canvas.width, y: Math.floor(Math.random() * (canvas.height / 2)) + 50 });
-            }
-        }, 1500);
+                    if (pipes.length === 0 || pipes[pipes.length - 1].x < canvas.width - 200) {
+                        pipes.push({ x: canvas.width, y: Math.floor(Math.random() * (canvas.height / 2)) + 50 });
+                        score++;
+                    }
+                }, 1500);
             };
         }
 
@@ -95,31 +109,29 @@
                 ctx.fillRect(pipe.x, pipe.y + 150, 40, canvas.height - pipe.y - 150);
 
                 // Check for collisions
-                if (pasta.x < pipe.x + 40 && pasta.x + 30 > pipe.x && (pasta.y < pipe.y || pasta.y + 30 > pipe.y + 100)) {
-                    resetGame();
+                if (pasta.x < pipe.x + 40 && pasta.x + 30 > pipe.x && (pasta.y < pipe.y || pasta.y + 30 > pipe.y + 150)) {
+                    endGame();
                 }
                 if (pasta.y + 30 >= canvas.height) {
-                    resetGame();
+                    endGame();
                 }
             });
 
             requestAnimationFrame(updateGame);
         }
 
-        function resetGame() {
+        function endGame() {
             clearInterval(pipeInterval);
             document.removeEventListener("mousedown", handleMouseClick);
-            gameStarted = false;
-            pipes = [];
-            pasta = { x: 50, y: 150, gravity: 0.25, lift: -6, velocity: 0 };
-            document.getElementById("startMenu").style.display = "flex";
             window.removeEventListener("keydown", handleKeyDown);
+            gameStarted = false;
+            document.getElementById("scoreDisplay").innerText = `Score: ${score}`;
+            document.getElementById("gameOverMenu").style.display = "flex";
         }
-            gameStarted = false;
-            pipes = [];
-            pasta = { x: 50, y: 150, gravity: 0.25, lift: -6, velocity: 0 };
+
+        function goToMainMenu() {
+            document.getElementById("gameOverMenu").style.display = "none";
             document.getElementById("startMenu").style.display = "flex";
-            window.removeEventListener("keydown", handleKeyDown);
         }
     </script>
 </body>
