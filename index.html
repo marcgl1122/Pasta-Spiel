@@ -63,7 +63,7 @@
         let fps = 60;
 function startGame(pastaSrc) {
             if (gameStarted) return;
-            document.addEventListener("mousedown", handleMouseClick, false);
+            document.addEventListener("mousedown", handleMouseClick);
             pastaImage = new Image();
             pastaImage.src = pastaSrc;
             pastaImage.onload = () => {
@@ -73,7 +73,20 @@ function startGame(pastaSrc) {
                 score = 0;
                 pipes = [];
                 pasta = { x: 50, y: 150, gravity: 0.25, lift: -6, velocity: 0 };
-                setTimeout(() => { requestAnimationFrame(updateGame); }, 1000 / 60);
+                lastUpdateTime = performance.now();
+                requestAnimationFrame(updateGame);
+                window.addEventListener("keydown", handleKeyDown);
+                pipeInterval = setInterval(() => {
+                    if (pipes.length === 0 || pipes[pipes.length - 1].x < canvas.width - 200) {
+                        pipes.push({ x: canvas.width, y: Math.floor(Math.random() * (canvas.height / 2)) + 50, passed: false });
+                    }
+                }, 1500);
+            };
+        }
+                score = 0;
+                pipes = [];
+                pasta = { x: 50, y: 150, gravity: 0.25, lift: -6, velocity: 0 };
+                requestAnimationFrame(updateGame);
                 window.addEventListener("keydown", handleKeyDown, false);
                 pipeInterval = setInterval(() => {
                     if (pipes.length === 0 || pipes[pipes.length - 1].x < canvas.width - 200) {
@@ -85,9 +98,10 @@ function startGame(pastaSrc) {
         }
 
         function handleKeyDown(event) {
-            if (event.code === "Space") {
+            if (event.code === "Space" && gameStarted) {
                 pasta.velocity = pasta.lift;
             }
+        }
         }
         }
         
