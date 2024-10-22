@@ -64,17 +64,15 @@
 function startGame(pastaSrc) {
             document.getElementById("startMenu").style.display = "none";
             document.getElementById("gameOverMenu").style.display = "none";
-            gameStarted = true;
             pastaImage = new Image();
             pastaImage.src = pastaSrc;
-            pastaImage.onload = () => {
-                gameStarted = true;
-                score = 0;
-                pipes = [];
-                pasta = { x: 50, y: 150, gravity: 0.25, lift: -6, velocity: 0 };
-                lastUpdateTime = performance.now();
-                requestAnimationFrame(updateGame);
-                pipeInterval = setInterval(() => {
+            score = 0;
+            pipes = [];
+            pasta = { x: 50, y: 150, gravity: 0.25, lift: -6, velocity: 0 };
+            lastUpdateTime = performance.now();
+            gameStarted = true;
+            requestAnimationFrame(updateGame);
+            pipeInterval = setInterval(() => {
                     if (pipes.length === 0 || pipes[pipes.length - 1].x < canvas.width - 200) {
                         pipes.push({ x: canvas.width, y: Math.floor(Math.random() * (canvas.height / 2)) + 50, passed: false });
                     }
@@ -129,12 +127,16 @@ function startGame(pastaSrc) {
         }
             }
         }
+            }
+        }
         }
         }
         
         function handleMouseClick() {
             if (gameStarted) {
                 pasta.velocity = pasta.lift;
+            }
+        }
             }
         }
         }
@@ -181,6 +183,7 @@ function startGame(pastaSrc) {
             pasta.velocity = 0;
             document.getElementById("scoreDisplay").innerText = `Score: ${score}`;
             document.getElementById("gameOverMenu").style.display = "flex";
+        }
         }
         }
         }
