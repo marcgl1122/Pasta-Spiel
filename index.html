@@ -71,7 +71,7 @@
                 gameStarted = true;
                 score = 0;
                 pipes = [];
-                pasta = { x: 50, y: 150, gravity: 0.25, lift: -6, velocity: 0 };
+                pasta = { x: 50, y: 150, gravity: 0.2, lift: -5, velocity: 0 };
                 requestAnimationFrame(updateGame);
                 window.addEventListener("keydown", handleKeyDown, false);
                 pipeInterval = setInterval(() => {
@@ -108,13 +108,13 @@
                     score++;
                     pipe.passed = true;
                 }
-                pipe.x -= 2;
+                pipe.x -= 1.5;
                 ctx.fillStyle = "#5b8c3a";
                 ctx.fillRect(pipe.x, 0, 40, pipe.y);
                 ctx.fillRect(pipe.x, pipe.y + 150, 40, canvas.height - pipe.y - 150);
 
                 // Check for collisions
-                if (pasta.x < pipe.x + 40 && pasta.x + 30 > pipe.x && (pasta.y < pipe.y + 15 || pasta.y + 30 > pipe.y + 150)) {
+                if (pasta.x < pipe.x + 40 && pasta.x + 20 > pipe.x && (pasta.y < pipe.y + 15 || pasta.y + 20 > pipe.y + 150)) {
                     endGame();
                 }
                 if (pasta.y + 30 >= canvas.height) {
