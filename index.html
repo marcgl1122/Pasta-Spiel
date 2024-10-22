@@ -72,7 +72,7 @@
                 score = 0;
                 pipes = [];
                 pasta = { x: 50, y: 150, gravity: 0.15, lift: -4, velocity: 0 };
-                requestAnimationFrame(updateGame);
+                setTimeout(() => { requestAnimationFrame(updateGame); }, 1000 / 60);
                 window.addEventListener("keydown", handleKeyDown, false);
                 pipeInterval = setInterval(() => {
                     if (pipes.length === 0 || pipes[pipes.length - 1].x < canvas.width - 200) {
@@ -108,7 +108,7 @@
                     score++;
                     pipe.passed = true;
                 }
-                pipe.x -= 1;
+                pipe.x -= 1.5;
                 ctx.fillStyle = "#5b8c3a";
                 ctx.fillRect(pipe.x, 0, 40, pipe.y);
                 ctx.fillRect(pipe.x, pipe.y + 150, 40, canvas.height - pipe.y - 150);
