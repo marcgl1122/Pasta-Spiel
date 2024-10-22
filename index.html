@@ -61,7 +61,8 @@
         let pipeInterval;
 
         function startGame(pastaSrc) {
-            document.addEventListener("mousedown", handleMouseClick);
+            if (gameStarted) return;
+            document.addEventListener("mousedown", handleMouseClick, { once: true });
             pastaImage = new Image();
             pastaImage.src = pastaSrc;
             pastaImage.onload = () => {
@@ -72,7 +73,7 @@
                 pipes = [];
                 pasta = { x: 50, y: 150, gravity: 0.25, lift: -6, velocity: 0 };
                 requestAnimationFrame(updateGame);
-                window.addEventListener("keydown", handleKeyDown);
+                window.addEventListener("keydown", handleKeyDown, { once: true });
                 pipeInterval = setInterval(() => {
                     if (pipes.length === 0 || pipes[pipes.length - 1].x < canvas.width - 200) {
                         pipes.push({ x: canvas.width, y: Math.floor(Math.random() * (canvas.height / 2)) + 50 });
@@ -123,6 +124,7 @@
         function endGame() {
             clearInterval(pipeInterval);
             document.removeEventListener("mousedown", handleMouseClick);
+            window.removeEventListener("keydown", handleKeyDown);
             window.removeEventListener("keydown", handleKeyDown);
             gameStarted = false;
             document.getElementById("scoreDisplay").innerText = `Score: ${score}`;
