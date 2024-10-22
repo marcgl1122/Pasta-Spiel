@@ -51,6 +51,7 @@
         let gameStarted = false;
 
         function startGame(pastaSrc) {
+            document.addEventListener("mousedown", handleMouseClick);
             pastaImage = new Image();
             pastaImage.src = pastaSrc;
             pastaImage.onload = () => {
@@ -72,12 +73,19 @@
                 pasta.velocity = pasta.lift;
             }
         }
+        
+        function handleMouseClick() {
+            pasta.velocity = pasta.lift;
+            if (event.code === "Space") {
+                pasta.velocity = pasta.lift;
+            }
+        }
 
         function updateGame() {
             if (!gameStarted) return;
 
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(pastaImage, pasta.x, pasta.y, pastaImage.width / 8, pastaImage.height / 8);
+            ctx.drawImage(pastaImage, pasta.x, pasta.y, 40, 40);
 
             pasta.velocity += pasta.gravity;
             pasta.y += pasta.velocity;
@@ -102,6 +110,8 @@
         }
 
         function resetGame() {
+            clearInterval(pipeInterval);
+            document.removeEventListener("mousedown", handleMouseClick);
             clearInterval(pipeInterval);
             gameStarted = false;
             pipes = [];
