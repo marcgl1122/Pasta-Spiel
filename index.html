@@ -60,7 +60,8 @@
         let score = 0;
         let pipeInterval;
 
-        function startGame(pastaSrc) {
+        let fps = 60;
+function startGame(pastaSrc) {
             if (gameStarted) return;
             document.addEventListener("mousedown", handleMouseClick, false);
             pastaImage = new Image();
@@ -108,7 +109,7 @@
                     score++;
                     pipe.passed = true;
                 }
-                pipe.x -= 1.5;
+                pipe.x -= (1.5 * (60 / fps));
                 ctx.fillStyle = "#5b8c3a";
                 ctx.fillRect(pipe.x, 0, 40, pipe.y);
                 ctx.fillRect(pipe.x, pipe.y + 150, 40, canvas.height - pipe.y - 150);
