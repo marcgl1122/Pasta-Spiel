@@ -57,11 +57,17 @@
                 document.getElementById("startMenu").style.display = "none";
                 gameStarted = true;
                 requestAnimationFrame(updateGame);
-                addEventListener("keydown", () => { pasta.velocity = pasta.lift; });
+                window.addEventListener("keydown", handleKeyDown);
                 setInterval(() => {
                     pipes.push({ x: canvas.width, y: Math.floor(Math.random() * (canvas.height / 2)) + 50 });
                 }, 1500);
             };
+        }
+
+        function handleKeyDown(event) {
+            if (event.code === "Space") {
+                pasta.velocity = pasta.lift;
+            }
         }
 
         function updateGame() {
@@ -97,6 +103,7 @@
             pipes = [];
             pasta = { x: 50, y: 150, gravity: 0.25, lift: -6, velocity: 0 };
             document.getElementById("startMenu").style.display = "flex";
+            window.removeEventListener("keydown", handleKeyDown);
         }
     </script>
 </body>
