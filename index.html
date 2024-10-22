@@ -1,229 +1,103 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Flappy Pasta</title>
-  <style>
-    body {
-      margin: 0;
-      overflow: hidden;
-      font-family: Arial, sans-serif;
-      background-color: #87CEEB;
-    }
-    canvas {
-      display: block;
-      margin: 0 auto;
-    }
-    #menu {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      background-color: #87CEEB;
-    }
-    .pasta-button {
-      margin: 10px;
-      padding: 15px 30px;
-      font-size: 20px;
-      cursor: pointer;
-    }
-    
-  </style>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
-  <script>
-    // Your web app's Firebase configuration
-    const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_AUTH_DOMAIN",
-      projectId: "YOUR_PROJECT_ID",
-      storageBucket: "YOUR_STORAGE_BUCKET",
-      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-      appId: "YOUR_APP_ID",
-      databaseURL: "YOUR_DATABASE_URL"
-    };
-
-    // Initialize Firebase
-    const app = firebase.initializeApp(firebaseConfig);
-    const database = firebase.database();
-
-    function writeHighscore(name, score) {
-      const highscoreRef = database.ref('highscores').push();
-      highscoreRef.set({
-        name: name,
-        score: score
-      });
-    }
-
-    function loadHighscores() {
-      const highscoreRef = database.ref('highscores').orderByChild('score').limitToLast(10);
-      highscoreRef.on('value', (snapshot) => {
-        const highscores = [];
-        snapshot.forEach((childSnapshot) => {
-          const data = childSnapshot.val();
-          highscores.unshift(`${data.name}: ${data.score}`);
-        });
-        document.getElementById('highscores').innerHTML = '<h2>Highscores</h2><ul>' + highscores.map(score => `<li>${score}</li>`).join('') + '</ul>';
-      });
-    }
-
-    window.onload = function() {
-      loadHighscores();
-    };
-  </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flappy Pasta Game</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #70c5ce;
+        }
+        #gameCanvas {
+            background: url('background.png') repeat-x;
+        }
+        #startMenu {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: Arial, sans-serif;
+        }
+        #startMenu button {
+            margin: 10px;
+            padding: 10px;
+            font-size: 16px;
+        }
+    </style>
 </head>
 <body>
-  <div id="menu">
-    <h1>Choose Your Pasta</h1>
-    <button class="pasta-button" onclick="startGame('pasta1.png')">Ravioli</button>
-    <button class="pasta-button" onclick="startGame('pasta2.png')">Fusilli</button>
-    <button class="pasta-button" onclick="startGame('pasta3.png')">Penne</button>
-    
-  </div>
-  <canvas id="gameCanvas" width="800" height="600" style="display: none;"></canvas>
-  <script>
-    const canvas = document.getElementById('gameCanvas');
-    const ctx = canvas.getContext('2d');
+    <div id="startMenu">
+        <h1>Choose Your Pasta!</h1>
+        <button onclick="startGame('pasta1.png')">Ravioli</button>
+        <button onclick="startGame('pasta2.png')">Fusilli</button>
+        <button onclick="startGame('pasta3.png')">Penne</button>
+    </div>
+    <canvas id="gameCanvas" width="480" height="640"></canvas>
 
-    let pastaY = canvas.height / 2;
-    let velocity = 0;
-    const gravity = 0.5;
-    const lift = -10;
+    <script>
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+        let pastaImage;
+        let pasta = { x: 50, y: 150, gravity: 0.25, lift: -6, velocity: 0 };
+        let pipes = [];
+        let gameStarted = false;
 
-    let pipes = [];
-    let frameCount = 0;
-    let score = 0;
-    let lastUpdateTime = performance.now();
-    const targetFrameRate = 1000 / 60; // Set the target frame rate to 60 FPS
-
-    const pastaImage = new Image();
-    pastaImage.onerror = function() {
-      console.error("Failed to load pasta image. Please check the path to the pasta image.");
-    };
-
-    const backgroundImage = new Image();
-    backgroundImage.src = 'background.png'; // Use the background image file
-    backgroundImage.onload = function() {
-      console.log("Background image loaded successfully.");
-    };
-    backgroundImage.onerror = function() {
-      console.error("Failed to load background image. Please check the path to 'background.png'.");
-    };
-
-    let backgroundX = 0;
-
-    function startGame(pastaSrc) {
-      pastaImage.src = pastaSrc;
-      pastaImage.onload = function() {
-        document.getElementById('menu').style.display = 'none';
-        canvas.style.display = 'block';
-        lastUpdateTime = performance.now();
-        requestAnimationFrame(gameLoop);
-      };
-    }
-    };
-      };
-    }
-    
-    function createPipe() {
-      const gapHeight = 150;
-      const pipeWidth = 80;
-      const topHeight = Math.random() * (canvas.height - gapHeight - 50) + 25;
-      pipes.push({
-        x: canvas.width,
-        width: pipeWidth,
-        top: topHeight,
-        bottom: topHeight + gapHeight,
-        passed: false
-      });
-    }
-
-    function update(deltaTime) {
-      frameCount++;
-      if (frameCount % 100 === 0) {
-        createPipe();
-      }
-
-      velocity += gravity * 1.3 * (deltaTime / targetFrameRate);
-      pastaY += velocity * (deltaTime / targetFrameRate);
-      if (pastaY < 0) pastaY = 0;
-      if (pastaY > canvas.height) pastaY = canvas.height;
-
-      pipes.forEach(pipe => {
-        pipe.x -= 3.9 * (deltaTime / targetFrameRate);
-        if (
-          (pastaY < pipe.top || pastaY > pipe.bottom) &&
-          pipe.x < 100 && pipe.x + pipe.width > 50
-        ) {
-          gameOver();
+        function startGame(pastaSrc) {
+            pastaImage = new Image();
+            pastaImage.src = pastaSrc;
+            pastaImage.onload = () => {
+                document.getElementById("startMenu").style.display = "none";
+                gameStarted = true;
+                requestAnimationFrame(updateGame);
+                addEventListener("keydown", () => { pasta.velocity = pasta.lift; });
+                setInterval(() => {
+                    pipes.push({ x: canvas.width, y: Math.floor(Math.random() * (canvas.height / 2)) + 50 });
+                }, 1500);
+            };
         }
 
-        // Increment score when pasta passes a pipe
-        if (!pipe.passed && pipe.x + pipe.width < 50) {
-          score++;
-          pipe.passed = true;
+        function updateGame() {
+            if (!gameStarted) return;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(pastaImage, pasta.x, pasta.y);
+
+            pasta.velocity += pasta.gravity;
+            pasta.y += pasta.velocity;
+
+            // Draw pipes
+            pipes.forEach(pipe => {
+                pipe.x -= 2;
+                ctx.fillStyle = "#5b8c3a";
+                ctx.fillRect(pipe.x, 0, 40, pipe.y);
+                ctx.fillRect(pipe.x, pipe.y + 100, 40, canvas.height - pipe.y);
+
+                // Check for collisions
+                if (pasta.x < pipe.x + 40 && pasta.x + 30 > pipe.x && (pasta.y < pipe.y || pasta.y + 30 > pipe.y + 100)) {
+                    resetGame();
+                }
+                if (pasta.y + 30 >= canvas.height) {
+                    resetGame();
+                }
+            });
+
+            requestAnimationFrame(updateGame);
         }
-      });
-      pipes = pipes.filter(pipe => pipe.x + pipe.width > 0);
 
-      backgroundX -= 3.9 * (deltaTime / targetFrameRate);
-      if (backgroundX <= -canvas.width) {
-        backgroundX = 0;
-      }
-    }
-
-    function gameOver() {
-      let playerName = prompt('Game over! Enter your name:');
-      if (playerName) {
-        writeHighscore(playerName, score);
-      }
-      resetGame();
-    }
-
-    function resetGame() {
-      pastaY = canvas.height / 2;
-      velocity = 0;
-      pipes = [];
-      frameCount = 0;
-      score = 0;
-      setTimeout(() => {
-        document.getElementById('menu').style.display = 'flex';
-      }, 500); // Small delay before showing the menu again
-      canvas.style.display = 'none';
-      console.log('Game Reset');
-    }
-
-    function draw() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      // Draw scrolling background
-      ctx.drawImage(backgroundImage, backgroundX, 0, canvas.width, canvas.height);
-      ctx.drawImage(backgroundImage, backgroundX + canvas.width, 0, canvas.width, canvas.height);
-
-      ctx.drawImage(pastaImage, 50, pastaY - 63, 126, 126);
-      
-      pipes.forEach(pipe => {
-        ctx.fillStyle = 'green';
-        ctx.fillRect(pipe.x, 0, pipe.width, pipe.top);
-        ctx.fillRect(pipe.x, pipe.bottom, pipe.width, canvas.height - pipe.bottom);
-      });
-
-      ctx.fillStyle = 'black';
-      ctx.font = '20px Arial';
-      ctx.fillText('Score: ' + score, 10, 30);
-      console.log('Current Score: ' + score);
-    }
-
-    function gameLoop(currentTime) {
-      const deltaTime = currentTime - lastUpdateTime;
-
-      if (deltaTime >= targetFrameRate) {
-        update(deltaTime);
-        draw();
-        lastUpdateTime = currentTime;
-      }
-
-      requestAnimationFrame(gameLoop);
-    }
+        function resetGame() {
+            gameStarted = false;
+            pipes = [];
+            pasta = { x: 50, y: 150, gravity: 0.25, lift: -6, velocity: 0 };
+            document.getElementById("startMenu").style.display = "flex";
+        }
+    </script>
+</body>
+</html>
