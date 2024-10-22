@@ -38,7 +38,7 @@
 </head>
 <body>
     <div id="startMenu">
-        <h1>Wähle deine Pasta</h1>
+        <h1>Choose Your Pasta!</h1>
         <button onclick="startGame('pasta1.png')">Ravioli</button>
         <button onclick="startGame('pasta2.png')">Fusilli</button>
         <button onclick="startGame('pasta3.png')">Penne</button>
@@ -60,8 +60,7 @@
         let score = 0;
         let pipeInterval;
 
-        let fps = 60;
-function startGame(pastaSrc) {
+        function startGame(pastaSrc) {
             if (gameStarted) return;
             document.addEventListener("mousedown", handleMouseClick, false);
             pastaImage = new Image();
@@ -72,8 +71,8 @@ function startGame(pastaSrc) {
                 gameStarted = true;
                 score = 0;
                 pipes = [];
-                pasta = { x: 50, y: 150, gravity: 0.25, lift: -6, velocity: 0 };
-                setTimeout(() => { requestAnimationFrame(updateGame); }, 1000 / 60);
+                pasta = { x: 50, y: 150, gravity: 0.2, lift: -5, velocity: 0 };
+                requestAnimationFrame(updateGame);
                 window.addEventListener("keydown", handleKeyDown, false);
                 pipeInterval = setInterval(() => {
                     if (pipes.length === 0 || pipes[pipes.length - 1].x < canvas.width - 200) {
@@ -86,7 +85,7 @@ function startGame(pastaSrc) {
 
         function handleKeyDown(event) {
             if (event.code === "Space") {
-                pasta.velocity = pasta.lift * deltaTime * 60;
+                pasta.velocity = pasta.lift;
             }
         }
         
@@ -94,18 +93,14 @@ function startGame(pastaSrc) {
             pasta.velocity = pasta.lift;
         }
 
-        let lastUpdateTime = performance.now();
         function updateGame() {
-            let currentTime = performance.now();
-            let deltaTime = (currentTime - lastUpdateTime) / 1000;
-            lastUpdateTime = currentTime;
             if (!gameStarted) return;
 
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(pastaImage, pasta.x, pasta.y, 78, 78);
+            ctx.drawImage(pastaImage, pasta.x, pasta.y, 120, 120);
 
             pasta.velocity += pasta.gravity;
-            pasta.y += pasta.velocity * deltaTime * 60;
+            pasta.y += pasta.velocity;
 
             // Draw pipes
             pipes.forEach(pipe => {
@@ -113,16 +108,16 @@ function startGame(pastaSrc) {
                     score++;
                     pipe.passed = true;
                 }
-                pipe.x -= 100 * deltaTime;
+                pipe.x -= 1.5;
                 ctx.fillStyle = "#5b8c3a";
                 ctx.fillRect(pipe.x, 0, 40, pipe.y);
                 ctx.fillRect(pipe.x, pipe.y + 150, 40, canvas.height - pipe.y - 150);
 
                 // Check for collisions
-                if (pasta.x + 39 < pipe.x + 40 && pasta.x + 39 > pipe.x && (pasta.y + 39 < pipe.y || pasta.y + 39 > pipe.y + 150)) {
+                if (pasta.x < pipe.x + 40 && pasta.x + 30 > pipe.x && (pasta.y < pipe.y || pasta.y + 45 > pipe.y + 150)) {
                     endGame();
                 }
-                if (pasta.y + 39 >= canvas.height) {
+                if (pasta.y + 45 >= canvas.height) {
                     endGame();
                 }
             });
