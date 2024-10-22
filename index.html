@@ -86,9 +86,8 @@ function startGame(pastaSrc) {
 
         function handleKeyDown(event) {
             if (event.code === "Space") {
-                pasta.velocity = pasta.lift;
+                pasta.velocity = pasta.lift * deltaTime * 60;
             }
-        }
         }
         
         function handleMouseClick() {
@@ -105,8 +104,8 @@ function startGame(pastaSrc) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.drawImage(pastaImage, pasta.x, pasta.y, 78, 78);
 
-            pasta.velocity += pasta.gravity * deltaTime * 60;
-            pasta.y += pasta.velocity;
+            pasta.velocity += pasta.gravity;
+            pasta.y += pasta.velocity * deltaTime * 60;
 
             // Draw pipes
             pipes.forEach(pipe => {
