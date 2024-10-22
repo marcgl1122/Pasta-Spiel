@@ -72,7 +72,7 @@ function startGame(pastaSrc) {
                 gameStarted = true;
                 score = 0;
                 pipes = [];
-                pasta = { x: 50, y: 150, gravity: 0.15, lift: -4, velocity: 0 };
+                pasta = { x: 50, y: 150, gravity: 0.25, lift: -6, velocity: 0 };
                 setTimeout(() => { requestAnimationFrame(updateGame); }, 1000 / 60);
                 window.addEventListener("keydown", handleKeyDown, false);
                 pipeInterval = setInterval(() => {
@@ -89,6 +89,7 @@ function startGame(pastaSrc) {
                 pasta.velocity = pasta.lift;
             }
         }
+        }
         
         function handleMouseClick() {
             pasta.velocity = pasta.lift;
@@ -104,8 +105,8 @@ function startGame(pastaSrc) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.drawImage(pastaImage, pasta.x, pasta.y, 78, 78);
 
-            pasta.velocity += pasta.gravity;
-            pasta.y += pasta.velocity * deltaTime * 60;
+            pasta.velocity += pasta.gravity * deltaTime * 60;
+            pasta.y += pasta.velocity;
 
             // Draw pipes
             pipes.forEach(pipe => {
