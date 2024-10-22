@@ -94,14 +94,18 @@ function startGame(pastaSrc) {
             pasta.velocity = pasta.lift;
         }
 
+        let lastUpdateTime = performance.now();
         function updateGame() {
+            let currentTime = performance.now();
+            let deltaTime = (currentTime - lastUpdateTime) / 1000;
+            lastUpdateTime = currentTime;
             if (!gameStarted) return;
 
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.drawImage(pastaImage, pasta.x, pasta.y, 78, 78);
 
             pasta.velocity += pasta.gravity;
-            pasta.y += pasta.velocity;
+            pasta.y += pasta.velocity * deltaTime * 60;
 
             // Draw pipes
             pipes.forEach(pipe => {
@@ -109,7 +113,7 @@ function startGame(pastaSrc) {
                     score++;
                     pipe.passed = true;
                 }
-                pipe.x -= (1.5 * (60 / fps));
+                pipe.x -= 100 * deltaTime;
                 ctx.fillStyle = "#5b8c3a";
                 ctx.fillRect(pipe.x, 0, 40, pipe.y);
                 ctx.fillRect(pipe.x, pipe.y + 150, 40, canvas.height - pipe.y - 150);
