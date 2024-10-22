@@ -97,13 +97,7 @@
             if (!gameStarted) return;
 
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            if (pastaImage.src.includes('pasta1.png')) {
-                ctx.drawImage(pastaImage, pasta.x, pasta.y, 120, 120);
-            } else if (pastaImage.src.includes('pasta2.png')) {
-                ctx.drawImage(pastaImage, pasta.x, pasta.y, 120, 120);
-            } else if (pastaImage.src.includes('pasta3.png')) {
-                ctx.drawImage(pastaImage, pasta.x, pasta.y, 120, 120);
-            }
+            ctx.drawImage(pastaImage, pasta.x, pasta.y, 120, 120);
 
             pasta.velocity += pasta.gravity;
             pasta.y += pasta.velocity;
