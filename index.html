@@ -98,9 +98,9 @@
 
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             if (pastaImage.src.includes('pasta1.png')) {
-                ctx.drawImage(pastaImage, pasta.x, pasta.y, 80, 80);
+                ctx.drawImage(pastaImage, pasta.x, pasta.y, 120, 120);
             } else {
-                ctx.drawImage(pastaImage, pasta.x, pasta.y, 40, 40);
+                ctx.drawImage(pastaImage, pasta.x, pasta.y, 60, 60);
             }
 
             pasta.velocity += pasta.gravity;
