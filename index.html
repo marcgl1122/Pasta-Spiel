@@ -59,8 +59,10 @@
                 requestAnimationFrame(updateGame);
                 window.addEventListener("keydown", handleKeyDown);
                 setInterval(() => {
+                if (pipes.length === 0 || pipes[pipes.length - 1].x < canvas.width - 200) {
                     pipes.push({ x: canvas.width, y: Math.floor(Math.random() * (canvas.height / 2)) + 50 });
-                }, 1500);
+                }
+            }, 1500);
             };
         }
 
@@ -74,7 +76,7 @@
             if (!gameStarted) return;
 
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(pastaImage, pasta.x, pasta.y, pastaImage.width / 3, pastaImage.height / 3);
+            ctx.drawImage(pastaImage, pasta.x, pasta.y, pastaImage.width / 5, pastaImage.height / 5);
 
             pasta.velocity += pasta.gravity;
             pasta.y += pasta.velocity;
