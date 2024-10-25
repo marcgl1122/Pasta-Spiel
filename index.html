@@ -4,37 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flappy Pasta Game</title>
-    <style>
-        body {
-            margin: 0;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: #70c5ce;
-        }
-        #gameCanvas {
-            background: url('background.png') repeat-x;
-        }
-        #startMenu, #gameOverMenu {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-family: Arial, sans-serif;
-        }
-        #startMenu button, #gameOverMenu button {
-            margin: 10px;
-            padding: 10px;
-            font-size: 16px;
-        }
-        #gameOverMenu {
-            display: none;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div id="startMenu">
@@ -50,128 +20,135 @@
     </div>
     <canvas id="gameCanvas" width="480" height="640"></canvas>
 
-    <script>
-        const canvas = document.getElementById("gameCanvas");
-        const ctx = canvas.getContext("2d");
-        let pastaImage;
-        let pasta = { x: 50, y: 150, gravity: 0.25, lift: -8, velocity: 0 };
-        let pipes = [];
-        let gameStarted = false;
-        let score = 0;
-        let pipeInterval;
-
-        function startGame(pastaSrc) {
-            document.getElementById("startMenu").style.display = "none";
-            document.getElementById("gameOverMenu").style.display = "none";
-            pastaImage = new Image();
-            pastaImage.src = pastaSrc;
-            pastaImage.onload = () => {
-                gameStarted = true;
-                score = 0;
-                pipes = [];
-                pasta = { x: 50, y: 150, gravity: 0.2, lift: -5, velocity: 0 };
-                lastTime = performance.now();
-                requestAnimationFrame(updateGame);
-                document.addEventListener("mousedown", handleMouseClick);
-                window.addEventListener("keydown", handleKeyDown);
-                pipeInterval = setInterval(() => {
-                    if (pipes.length === 0 || pipes[pipes.length - 1].x < canvas.width - 200) {
-                        pipes.push({ x: canvas.width, y: Math.floor(Math.random() * (canvas.height / 2)) + 50, passed: false });
-                    }
-                }, 1500);
-            };
-                gameStarted = true;
-                score = 0;
-                pipes = [];
-                pasta = { x: 50, y: 150, gravity: 0.2, lift: -5, velocity: 0 };
-                lastTime = performance.now();
-                requestAnimationFrame(updateGame);
-                document.addEventListener("mousedown", handleMouseClick);
-                window.addEventListener("keydown", handleKeyDown);
-                pipeInterval = setInterval(() => {
-                    if (pipes.length === 0 || pipes[pipes.length - 1].x < canvas.width - 200) {
-                        pipes.push({ x: canvas.width, y: Math.floor(Math.random() * (canvas.height / 2)) + 50, passed: false });
-                    }
-                }, 1500);
-            };
-                document.getElementById("startMenu").style.display = "none";
-                document.getElementById("gameOverMenu").style.display = "none";
-                gameStarted = true;
-                score = 0;
-                pipes = [];
-                pasta = { x: 50, y: 150, gravity: 0.2, lift: -5, velocity: 0 };
-                if (gameStarted) {
-                requestAnimationFrame(updateGame);
-            }
-                window.addEventListener("keydown", handleKeyDown, false);
-                pipeInterval = setInterval(() => {
-                    if (pipes.length === 0 || pipes[pipes.length - 1].x < canvas.width - 200) {
-                        pipes.push({ x: canvas.width, y: Math.floor(Math.random() * (canvas.height / 2)) + 50, passed: false });
-                        
-                    }
-                }, 1500);
-            };
-        }
-
-        function handleKeyDown(event) {
-            if (event.code === "Space") {
-                pasta.velocity = pasta.lift;
-            }
-        }
-        
-        function handleMouseClick() {
-            pasta.velocity = pasta.lift;
-        }
-
-        let lastTime = performance.now();
-        function updateGame() {
-            const currentTime = performance.now();
-            const deltaTime = (currentTime - lastTime) / 1000;
-            lastTime = currentTime;
-            
-            if (!gameStarted) return;
-
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(pastaImage, pasta.x, pasta.y, 120, 120);
-
-            pasta.velocity += pasta.gravity * deltaTime * 60;
-            pasta.y += pasta.velocity * deltaTime * 60;
-
-            // Draw pipes
-            pipes.forEach(pipe => {
-                if (pipe.x + 40 < pasta.x && !pipe.passed) {
-                    score++;
-                    pipe.passed = true;
-                }
-                pipe.x -= 2 * deltaTime * 60;
-                ctx.fillStyle = "#5b8c3a";
-                ctx.fillRect(pipe.x, 0, 40, pipe.y);
-                ctx.fillRect(pipe.x, pipe.y + 150, 40, canvas.height - pipe.y - 150);
-
-                // Check for collisions
-                if (pasta.x < pipe.x + 40 && pasta.x + 30 > pipe.x && (pasta.y < pipe.y || pasta.y + 45 > pipe.y + 150)) {
-                    endGame();
-                }
-                if (pasta.y + 45 >= canvas.height) {
-                    endGame();
-                }
-            });
-
-            requestAnimationFrame(updateGame);
-        }
-
-        function endGame() {
-            clearInterval(pipeInterval);
-            document.removeEventListener("mousedown", handleMouseClick);
-            window.removeEventListener("keydown", handleKeyDown);
-            gameStarted = false;
-            pasta.velocity = 0;
-            document.getElementById("scoreDisplay").innerText = `Score: ${score}`;
-            document.getElementById("gameOverMenu").style.display = "flex";
-        } function goToMainMenu() {
-            document.getElementById("gameOverMenu").style.display = "none";
-            document.getElementById("startMenu").style.display = "flex";
-        }
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
+body {
+    margin: 0;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #70c5ce;
+}
+
+#gameCanvas {
+    background: url('background.png') repeat-x;
+}
+
+#startMenu, #gameOverMenu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: Arial, sans-serif;
+}
+
+#startMenu button, #gameOverMenu button {
+    margin: 10px;
+    padding: 10px;
+    font-size: 16px;
+}
+
+#gameOverMenu {
+    display: none;
+}
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+let pastaImage;
+let pasta = { x: 50, y: 150, gravity: 0.25, lift: -8, velocity: 0 };
+let pipes = [];
+let gameStarted = false;
+let score = 0;
+let pipeInterval;
+
+function startGame(pastaSrc) {
+    document.getElementById("startMenu").style.display = "none";
+    document.getElementById("gameOverMenu").style.display = "none";
+    pastaImage = new Image();
+    pastaImage.src = pastaSrc;
+    pastaImage.onload = () => {
+        initializeGame();
+    };
+}
+
+function initializeGame() {
+    gameStarted = true;
+    score = 0;
+    pipes = [];
+    pasta = { x: 50, y: 150, gravity: 0.2, lift: -5, velocity: 0 };
+    lastTime = performance.now();
+    requestAnimationFrame(updateGame);
+    document.addEventListener("mousedown", handleMouseClick);
+    window.addEventListener("keydown", handleKeyDown);
+    pipeInterval = setInterval(() => {
+        if (pipes.length === 0 || pipes[pipes.length - 1].x < canvas.width - 200) {
+            pipes.push({ x: canvas.width, y: Math.floor(Math.random() * (canvas.height / 2)) + 50, passed: false });
+        }
+    }, 1500);
+}
+
+function handleKeyDown(event) {
+    if (event.code === "Space") {
+        pasta.velocity = pasta.lift;
+    }
+}
+
+function handleMouseClick() {
+    pasta.velocity = pasta.lift;
+}
+
+let lastTime = performance.now();
+function updateGame() {
+    const currentTime = performance.now();
+    const deltaTime = (currentTime - lastTime) / 1000;
+    lastTime = currentTime;
+
+    if (!gameStarted) return;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(pastaImage, pasta.x, pasta.y, 120, 120);
+
+    pasta.velocity += pasta.gravity * deltaTime * 60;
+    pasta.y += pasta.velocity * deltaTime * 60;
+
+    // Draw pipes
+    pipes.forEach(pipe => {
+        if (pipe.x + 40 < pasta.x && !pipe.passed) {
+            score++;
+            pipe.passed = true;
+        }
+        pipe.x -= 2 * deltaTime * 60;
+        ctx.fillStyle = "#5b8c3a";
+        ctx.fillRect(pipe.x, 0, 40, pipe.y);
+        ctx.fillRect(pipe.x, pipe.y + 150, 40, canvas.height - pipe.y - 150);
+
+        // Check for collisions
+        if (pasta.x < pipe.x + 40 && pasta.x + 30 > pipe.x && (pasta.y < pipe.y || pasta.y + 45 > pipe.y + 150)) {
+            endGame();
+        }
+        if (pasta.y + 45 >= canvas.height) {
+            endGame();
+        }
+    });
+
+    requestAnimationFrame(updateGame);
+}
+
+function endGame() {
+    clearInterval(pipeInterval);
+    document.removeEventListener("mousedown", handleMouseClick);
+    window.removeEventListener("keydown", handleKeyDown);
+    gameStarted = false;
+    pasta.velocity = 0;
+    document.getElementById("scoreDisplay").innerText = `Score: ${score}`;
+    document.getElementById("gameOverMenu").style.display = "flex";
+}
+
+function goToMainMenu() {
+    document.getElementById("gameOverMenu").style.display = "none";
+    document.getElementById("startMenu").style.display = "flex";
+}
