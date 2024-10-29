@@ -61,25 +61,11 @@
         let pipeInterval;
 
         function startGame(pastaSrc) {
-            document.getElementById("startMenu").style.display = "none";
-            document.getElementById("gameOverMenu").style.display = "none";
+            if (gameStarted) return;
+            document.addEventListener("mousedown", handleMouseClick, false);
             pastaImage = new Image();
             pastaImage.src = pastaSrc;
             pastaImage.onload = () => {
-                gameStarted = true;
-                score = 0;
-                pipes = [];
-                pasta = { x: 50, y: 150, gravity: 0.2, lift: -5, velocity: 0 };
-                lastTime = performance.now();
-                requestAnimationFrame(updateGame);
-                document.addEventListener("mousedown", handleMouseClick);
-                window.addEventListener("keydown", handleKeyDown);
-                pipeInterval = setInterval(() => {
-                    if (pipes.length === 0 || pipes[pipes.length - 1].x < canvas.width - 200) {
-                        pipes.push({ x: canvas.width, y: Math.floor(Math.random() * (canvas.height / 2)) + 50, passed: false });
-                    }
-                }, 1500);
-            };
                 document.getElementById("startMenu").style.display = "none";
                 document.getElementById("gameOverMenu").style.display = "none";
                 gameStarted = true;
@@ -155,7 +141,9 @@
             document.getElementById("scoreDisplay").innerText = `Score: ${score}`;
             document.getElementById("gameOverMenu").style.display = "flex";
         }
-        } function goToMainMenu() {
+        }
+
+        function goToMainMenu() {
             document.getElementById("gameOverMenu").style.display = "none";
             document.getElementById("startMenu").style.display = "flex";
         }
