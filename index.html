@@ -72,9 +72,7 @@
                 score = 0;
                 pipes = [];
                 pasta = { x: 50, y: 150, gravity: 0.2, lift: -5, velocity: 0 };
-                if (gameStarted) {
                 requestAnimationFrame(updateGame);
-            }
                 window.addEventListener("keydown", handleKeyDown, false);
                 pipeInterval = setInterval(() => {
                     if (pipes.length === 0 || pipes[pipes.length - 1].x < canvas.width - 200) {
@@ -134,9 +132,13 @@
             window.removeEventListener("keydown", handleKeyDown);
             gameStarted = false;
             pasta.velocity = 0;
+            clearInterval(pipeInterval);
+            document.removeEventListener("mousedown", handleMouseClick);
+            window.removeEventListener("keydown", handleKeyDown);
+            window.removeEventListener("keydown", handleKeyDown);
+            gameStarted = false;
             document.getElementById("scoreDisplay").innerText = `Score: ${score}`;
             document.getElementById("gameOverMenu").style.display = "flex";
-        }
         }
 
         function goToMainMenu() {
